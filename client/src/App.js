@@ -23,6 +23,8 @@ class App extends Component {
       nowPlaying: { name: "Not Checked", albumArt: "" },
       currentDisplay: "",
       topSongs: [],
+      topArtists: [],
+      topAlbums: [],
     };
   }
 
@@ -72,6 +74,16 @@ class App extends Component {
     });
   }
 
+  getTopArtists() {
+    this.setState({
+      currentDisplay: "artists",
+    });
+    spotifyApi.getMyTopArtists().then((response) => {
+      console.log(response);
+      this.setState({ topArtists: response.body.items });
+    });
+  }
+
   render() {
     const logInButton = this.state.loggedIn ? (
       <div></div>
@@ -87,7 +99,6 @@ class App extends Component {
         </div>
       );
     } else if (this.state.currentDisplay === "song") {
-      console.log(this.state.topSongs);
       currentDisplay = (
         <div>
           {Array.from(this.state.topSongs, (element, index) => (
@@ -95,8 +106,14 @@ class App extends Component {
           ))}
         </div>
       );
-      console.log(currentDisplay);
     } else if (this.state.currentDisplay === "artists") {
+      currentDisplay = (
+        <div>
+          {Array.from(this.state.topArtists, (element, index) => (
+            <div>{index + 1 + ". " + element.name}</div>
+          ))}
+        </div>
+      );
     }
 
     return (
@@ -109,7 +126,7 @@ class App extends Component {
             <button onClick={() => this.getNowPlaying()}>
               Check Now Playing
             </button>
-            <button onClick={() => this.getMyCurrentPlayingTrack()}>
+            <button onClick={() => this.getTopArtists()}>
               Check Top Artists
             </button>
             <button onClick={() => this.getTopTracks()}>Check Top Songs</button>
